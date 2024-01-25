@@ -1,14 +1,25 @@
 #!/usr/bin/node
+// Write a script that prints the number of movies where
+// the character “Wedge Antilles” is present.
+
 const request = require('request');
-request(process.argv[2], (error, response, body) => {
+
+const url = process.argv[2];
+
+request(url, (error, response, body) => {
     if (error) {
-        console.error(`Error: ${error.message}`);
-        process.exit(1);
+        console.error('Error:', error);
+    } else {
+        const filmData = JSON.parse(body).results;
+        let numberApparition = 0;
+
+        for (const film of filmData) {
+            for (const character of film.characters) {
+                if (character.includes('/18/')) {
+                    numberApparition += 1;
+                }
+            }
+        }
+        console.log(numberApparition);
     }
-    const data = JSON.parse(body);
-    const Movies = data.results.filter((film) =>
-        film.characters.some(characterUrl => characterUrl === 'https://swapi-api.hbtn.io/api/people/18/')
-    );
-    // Display the number of movies where WedgeAntilles is present
-    console.log(Movies.length);
 });
